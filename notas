@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #Seguimento do vídeo de EF
 loadkeys pt-latin1
 rfkill unblock wifi
@@ -14,7 +14,7 @@ basestrap /mnt base-devel runit elogind-runit linux-hardened linux-hardened-head
 
 fstabgen -U /mnt >> /mnt/etc/fstab
 
-chroot /mnt 
+chroot /mnt
 #criar swapfile ... apenas para uefi -->> "dd if=/dev/zero of=/swapfile bs=1G count status=progress" (são 2x 1G de swap) PERMISSÕES??
 # por EF é chmod 600 /swapfile
 mkswap /swapfile
@@ -26,7 +26,7 @@ vim /etc/locale.gen
 locale-gen
 vim /etc/locale.conf # LANG=pt_PT.UTF-8
 
-pacman -S grub ou 2 ef9ibootmgr networkmanager networkmanager-runit network-manager-applet dosfstools bluez bluez-runit bluez-utils cups cups-runit xdg-utils xdg-user-dirs xdg-desktop-portal-wlr dialog wpa_supplicant wpa_supplicant-runit mtools reflector gvfs gvfs-smb nfs-utils inetutils dnsutils cups hplip alsa-utils pulseaudio 
+pacman -S grub ou 2 ef9ibootmgr networkmanager networkmanager-runit network-manager-applet dosfstools bluez bluez-runit bluez-utils cups cups-runit xdg-utils xdg-user-dirs xdg-desktop-portal-wlr dialog wpa_supplicant wpa_supplicant-runit mtools reflector gvfs gvfs-smb nfs-utils inetutils dnsutils cups hplip alsa-utils pulseaudio
 
 grub-install --target... (para UEFI e MBR)
 
@@ -39,12 +39,3 @@ umount -R /mmt
 reboot
 
 pause...
-
-
-
-
-
-
-
-
-

@@ -1,0 +1,155 @@
+#!/bin/bash
+set -u
+IFS=$'\n\t'
+function desc() {
+        >&2 printf "\\x1b[0;36m\\u25ab\\x1b[1;36m\\u25aa \\x1b[1;37m%s\\x1b[0m" "${1}"
+}
+function validate() {
+        # if failure else success
+        if [[ "$1" -ne 0 ]]; then
+                >&2 printf "\\n \\x1b[31mx\\x1b[0m %s\\n\\n" "${_AA_CMD}"
+                if [[ -z ${2+x} ]]; then
+                        exit 1
+                fi
+        else
+                >&2 printf " \\x1b[1;32m\\u221a\\x1b[0m"
+        fi
+}
+#Load Machine Template
+for file in *.aa; do
+	if [ -f "$file" ]; then
+		# shellcheck source=example.aa
+		source "$file"
+		break
+	fi
+done
+# Machine Role
+if [ -z ${AA_MACHINEROLE+x} ]; then
+	printf "Machine Role (dekstop/laptop/server/vm) [default: vm]: "
+	read -r AA_MACHINEROLE
+	if [ -z "$AA_MACHINEROLE" ]; then
+		AA_MACHINEROLE="vm"
+	fi
+fi
+# Machine Type
+if [ -z ${AA_MACHINETYPE+x} ]; then
+	printf "Machine Type (mbr/uefi) [default: uefi]: "
+	read -r AA_MACHINETYPE
+	if [ -z "$AA_MACHINETYPE" ]; then
+		AA_MACHINETYPE="uefi"
+	fi
+fi
+# Full Disk Encryption
+if [ -z ${AA_ENCRYPT+x} ]; then
+	printf "Full Disk Encryption (0/1) [default: 0]: "
+	read -r AA_ENCRYPT
+	if [ -z "$AA_ENCRYPT" ]; then
+		AA_ENCRYPT=0
+	fi
+fi
+# Xorg
+if [ -z ${AA_XORG+x} ]; then
+	printf "Xorg (0-2) [default: 0]: "
+	read -r AA_XORG
+	if [ -z "$AA_XORG" ]; then
+		AA_XORG=0
+	fi
+fi
+# Installation Disk
+if [ -z ${AA_DISK+x} ]; then
+	printf "Disk to use for install [default: /dev/sda]: "
+	read -r AA_DISK
+	if [ -z "$AA_DISK" ]; then
+		AA_DISK="/dev/sda"
+	fi
+fi
+# Hostname
+if [ -z ${AA_HOSTNAME+x} ]; then
+	printf "Hostname [default: arch.local]: "
+	read -r AA_HOSTNAME
+	if [ -z "$AA_HOSTNAME" ]; then
+		AA_HOSTNAME="arch.local"
+	fi
+	AA_HOST=${AA_HOSTNAME%%.*}
+else
+	AA_HOST=${AA_HOSTNAME%%.*}
+fi
+# Timezone
+if [ -z ${AA_TZ+x} ]; then
+	printf "Timezone [default: Europe/Lisbon]: "
+	read -r AA_TZ
+	if [ -z "$AA_TZ" ]; then
+		AA_TZ="Europe/Lisbon"
+	fi
+fi
+# Swap
+if [ -z ${AA_SWAP+x} ]; then
+	printf "Swap Size (in GB) [default: 4]: "
+	read -r AA_SWAP
+	if [ -z "$AA_SWAP" ]; then
+		AA_SWAP="4"
+	fi
+fi
+# Username
+if [ -z ${AA_USERNAME+x} ]; then
+	printf "Username [default: groot]: "
+	read -r AA_USERNAME
+	if [ -z "$AA_USERNAME" ]; then
+		AA_USERNAME="groot"
+	fi
+fi
+# Root Password
+if [ -z ${AA_PASSWD+x} ]; then
+	printf "Root/User password [default: moo]: "
+	read -r AA_PASSWD
+	if [ -z "$AA_PASSWD" ]; then
+		AA_PASSWD="moo"
+	fi
+fi
+# SSID
+if [ -z ${AA_WIFI_SSID+x} ]; then
+	printf "WiFi SSID [default: SSID]: "
+	read -r AA_WIFI_SSID
+	if [ -z "$AA_WIFI_SSID" ]; then
+		AA_WIFI_SSID="SSID"
+	fi
+fi
+# WiFi Password
+if [ -z ${AA_WIFI_PASSWD+x} ]; then
+	printf "WiFi password [default: moo]: "
+	read -r AA_WIFI_PASSWD
+	if [ -z "$AA_WIFI_PASSWD" ]; then
+		AA_WIFI_PASSWD="moo"
+	fi
+fi
+# IP Address
+if [ -z ${AA_IPADDR+x} ]; then
+	printf "IP Address (DHCP if Blank): "
+	read -r AA_IPADDR
+fi
+if [ -n "$AA_IPADDR" ]; then
+	# Gateway
+	if [ -z ${AA_GATEWAY+x} ]; then
+		printf "Gateway [default: 10.0.42.1]: "
+		read -r AA_GATEWAY
+		if [ -z "$AA_GATEWAY" ]; then
+			AA_GATEWAY="10.0.42.1"
+		fi
+	fi
+	# DNS
+	if [ -z ${AA_DNS+x} ]; then
+		printf "DNS [default: 1.1.1.1]: "
+		read -r AA_DNS
+		if [ -z "$AA_DNS" ]; then
+			AA_DNS="1.1.1.1"
+		fi
+	fi
+fi
+# Set Hidden Variables
+if [ "${AA_MACHINEROLE^^}" = "VM" ]; then
+	AA_UCODE=""
+fi
+if [ -z "${AA_PKGMAN}" ]; then
+	AA_PKGMAN="yay"
+fi
+linha 173
