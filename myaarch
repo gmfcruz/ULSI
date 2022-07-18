@@ -1,11 +1,12 @@
 #!/bin/bash
 set -u
 IFS=$'\n\t'
+#Funções
 function desc() {
         >&2 printf "\\x1b[0;36m\\u25ab\\x1b[1;36m\\u25aa \\x1b[1;37m%s\\x1b[0m" "${1}"
 }
 function validate() {
-        # if failure else success
+        # Em caso de falha, não valida, mas dá sucesso.
         if [[ "$1" -ne 0 ]]; then
                 >&2 printf "\\n \\x1b[31mx\\x1b[0m %s\\n\\n" "${_AA_CMD}"
                 if [[ -z ${2+x} ]]; then
@@ -15,7 +16,7 @@ function validate() {
                 >&2 printf " \\x1b[1;32m\\u221a\\x1b[0m"
         fi
 }
-#Load Machine Template
+# Carregar o ficheiro aa.*
 for file in *.aa; do
 	if [ -f "$file" ]; then
 		# shellcheck source=example.aa
@@ -23,25 +24,25 @@ for file in *.aa; do
 		break
 	fi
 done
-# Machine Role
+# Tipo de máquina
 if [ -z ${AA_MACHINEROLE+x} ]; then
-	printf "Machine Role (dekstop/laptop/server/vm) [default: vm]: "
+	printf "Tipo de máquina (PC secretária/PC portátil/Servidor/Máquina virtual) [Predefinição: Máguina virtual]: "
 	read -r AA_MACHINEROLE
 	if [ -z "$AA_MACHINEROLE" ]; then
 		AA_MACHINEROLE="vm"
 	fi
 fi
-# Machine Type
+# Tipo de arranque
 if [ -z ${AA_MACHINETYPE+x} ]; then
-	printf "Machine Type (mbr/uefi) [default: uefi]: "
+	printf "Tipo de arranque (mbr/uefi) [Predefinição: uefi]: "
 	read -r AA_MACHINETYPE
 	if [ -z "$AA_MACHINETYPE" ]; then
 		AA_MACHINETYPE="uefi"
 	fi
 fi
-# Full Disk Encryption
+# Encriptação total
 if [ -z ${AA_ENCRYPT+x} ]; then
-	printf "Full Disk Encryption (0/1) [default: 0]: "
+	printf "Encriptação total (0/1) [Predefinição: 0]: "
 	read -r AA_ENCRYPT
 	if [ -z "$AA_ENCRYPT" ]; then
 		AA_ENCRYPT=0
@@ -55,7 +56,7 @@ if [ -z ${AA_XORG+x} ]; then
 		AA_XORG=0
 	fi
 fi
-# Installation Disk
+# Disco de instalação 
 if [ -z ${AA_DISK+x} ]; then
 	printf "Disk to use for install [default: /dev/sda]: "
 	read -r AA_DISK
@@ -74,7 +75,7 @@ if [ -z ${AA_HOSTNAME+x} ]; then
 else
 	AA_HOST=${AA_HOSTNAME%%.*}
 fi
-# Timezone
+# Fuso horário
 if [ -z ${AA_TZ+x} ]; then
 	printf "Timezone [default: Europe/Lisbon]: "
 	read -r AA_TZ
@@ -90,41 +91,41 @@ if [ -z ${AA_SWAP+x} ]; then
 		AA_SWAP="4"
 	fi
 fi
-# Username
+# Nome do usuário
 if [ -z ${AA_USERNAME+x} ]; then
-	printf "Username [default: groot]: "
+	printf "Usuário [Predefinido: groot]: "
 	read -r AA_USERNAME
 	if [ -z "$AA_USERNAME" ]; then
 		AA_USERNAME="groot"
 	fi
 fi
-# Root Password
+# palavra-chave da conta raiz do sistema
 if [ -z ${AA_PASSWD+x} ]; then
-	printf "Root/User password [default: moo]: "
+	printf "Palavra-chave da conta raiz do sistema [Predefinida e muito segura: 1234]: "
 	read -r AA_PASSWD
 	if [ -z "$AA_PASSWD" ]; then
-		AA_PASSWD="moo"
+		AA_PASSWD="1234"
 	fi
 fi
-# SSID
+# SSID - Nome da Rede wifi
 if [ -z ${AA_WIFI_SSID+x} ]; then
-	printf "WiFi SSID [default: SSID]: "
+	printf "Nome da rede WiFi SSID [Predefinido: SSID]: "
 	read -r AA_WIFI_SSID
 	if [ -z "$AA_WIFI_SSID" ]; then
 		AA_WIFI_SSID="SSID"
 	fi
 fi
-# WiFi Password
+# Palavra-chave da rede wifi
 if [ -z ${AA_WIFI_PASSWD+x} ]; then
-	printf "WiFi password [default: moo]: "
+	printf "Palavra-chave da rede wifi [Predefinida e muito segura: 1234]: "
 	read -r AA_WIFI_PASSWD
 	if [ -z "$AA_WIFI_PASSWD" ]; then
-		AA_WIFI_PASSWD="moo"
+		AA_WIFI_PASSWD="1234"
 	fi
 fi
-# IP Address
+# Endereço do IP 
 if [ -z ${AA_IPADDR+x} ]; then
-	printf "IP Address (DHCP if Blank): "
+	printf "Endereço IP (Predefinição: DHCP): "
 	read -r AA_IPADDR
 fi
 if [ -n "$AA_IPADDR" ]; then
